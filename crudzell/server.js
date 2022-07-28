@@ -47,7 +47,35 @@ MongoClient.connect('mongodb+srv://yodacrudmaster:yodadev@cluster0.amosmil.mongo
     })
 
     app.put('/quotes', (req, res) => {
-      console.log(req.body)
+      quotesCollection.findOneAndUpdate(
+        { name: 'Yoda' },
+        {
+          $set: {
+            name: req.body.name,
+            quote: req.body.quote
+          }
+        },
+        {
+          upsert: true
+        }
+      )
+        .then(result => {
+          res.json('Success')
+        })
+        .catch(error => console.error(error))
+    })
+
+    app.delete('/quotes', (req, res) => {
+      quotesCollection.deleteOne(
+        {name: req.body.name },
+      )
+      .then(result => {
+        if (result.deletedCount === 0) {
+          return res.json('No quote to delete')
+        }
+        res.json(`Deleted Darth Vader\'s quote`)
+      })
+      .catch(error => console.error(error))
     })
 
     
